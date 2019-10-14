@@ -1,2 +1,3 @@
-test.............
-Lewis Howell
+This is a test file :D
+Once you are added as a collaborator, you should be able to add your name to the list below:
+- Lewis Howell
