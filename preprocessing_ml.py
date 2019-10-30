@@ -110,7 +110,7 @@ def scale_data(data, method='standard',v=1):
         return DataFrame(scaler_std.fit_transform(data.copy()),columns=data.columns)
     
     else:
-        print('\nscale_data encountered a failure!!\n')
+        print('\nscale_data encountered a failure!! Check parameters\n')
         return(-1)
 
 def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 1):
