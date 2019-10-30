@@ -11,7 +11,7 @@ and splitting dataset into test and training sets.
 print("Importing the preprocessing module for the Exeter NatSci Machine Learning Group.....")
 
 
-def chose_features(dataset, features=[], n_features = -1, v=1, vv =0):
+def chose_features(dataset, features=[], n_features = -1, v=0, vv =0):
     '''Return reduced dataset with only chosen columns
     - dataset: pandas dataframe of dataset to have columns chosen
     - features (optional, default = all features): list of strings matching features to keep
@@ -19,12 +19,10 @@ def chose_features(dataset, features=[], n_features = -1, v=1, vv =0):
     ['glucose', 'age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
         'diabetes', 'BPMeds', 'male', 'BMI', 'prevalentStroke',
         'education', 'heartRate', 'currentSmoker'],
-    - v (optional) - Verbose (default 1) int 0 or 1. Print no. of features kept and lost 
+    - v (optional) - Verbose (default 0) int 0 or 1. Print no. of features kept and lost 
     - vv (optional) - Very verbose (default 0) int 0 or 1. Print list of chosen and rejected features
     '''
     features = dataset.columns
-                
-    print('Now selecting chosen features....')
     
     if n_features != -1:
         if n_features > len(dataset.columns):
@@ -37,32 +35,37 @@ def chose_features(dataset, features=[], n_features = -1, v=1, vv =0):
             features = ordered_f[0:n_features+1]
 
     if v == 1: 
+        print('Now selecting chosen features....')
         print('\t * Number of features: ', len(features)-1, '(and "10YearCHD")')
         print('\t * Number of dropped features: ', len(dataset.columns) - len(features))
-        
-    if vv == 1:
+
+    if vv == 1:        
+        print('Now selecting chosen features....')
         print('\t * Chosen features: ', features)
         print('\t * Dropped features: ',[col for col in dataset.columns if col not in features])
-    print('')
     
     return dataset.copy()[features] #reduced dataset
 
-def drop_missing(dataset):
+def drop_missing(dataset,v=0):
     '''Drop rows with any missing values and return dataset with dropped rows. Prints number and percentage of rows dropped
     - Dataset: pandas Dataframe
+    - v (optional): verbosity (Int: 0 or 1)
     '''
-    print('Now dropping rows with missing values....')
+   
     dataset2 = dataset.copy().dropna().reset_index(drop=True)
     lost = len(dataset) - len(dataset2)
-    print('\t * Dropped {} rows {:.1f}%. {} rows remaining\n'.format(lost,lost/len(dataset)*100,len(dataset2)))
+    if v == 1:
+        print('Now dropping rows with missing values....')
+        print('\t * Dropped {} rows {:.1f}%. {} rows remaining\n'.format(lost,lost/len(dataset)*100,len(dataset2)))
+
     return dataset2
 
-def impute_missing(dataset, strategy = 'median', v=1, vv=0):
+def impute_missing(dataset, strategy = 'median', v=0, vv=0):
     '''Imputation - alternative to removing missing values.
     Fill all missing with column average (median or mean)
     dataset - Pandas Dataframe to be imputed
     strategy - str (optional) 'median' (default) or 'mean' to fill missing values with
-    - v (optional) - Verbose (default 1) int 0 or 1. Print no. of missing and imputed values  
+    - v (optional) - Verbose (default 0) int 0 or 1. Print no. of missing and imputed values  
     - vv (optional) - Very verbose (default 0) int 0 or 1. Print list of imputed features with counts and replaced value
     '''
     from sklearn.impute import SimpleImputer
@@ -70,7 +73,7 @@ def impute_missing(dataset, strategy = 'median', v=1, vv=0):
     from numpy import NaN
     my_imputer = SimpleImputer(strategy=strategy)
     dataset2 = DataFrame(my_imputer.fit_transform(dataset),columns=dataset.columns)
-    
+
     if v == 1: 
         print('Imputing missing values with {}....'.format(strategy))
         print('\t * Number of missing values: ', dataset.isna().sum().sum())
@@ -89,15 +92,15 @@ def impute_missing(dataset, strategy = 'median', v=1, vv=0):
     return dataset2
 
 
-def scale_data(data, method='standard',v=1):
+def scale_data(data, method='standard',v=0):
     '''Return dataset scaled by MinMaxScalar or StandardScalar methods from sklearn.preprocessing
     - data: pandas dataframe of data to be scaled
     - method (optional): str of either 'minmax' for MinMaxScalar or 'std' for StandardScaler (default arg)
-    - v (optiona -default = 1): Verbose
+    - v (optional -default = 0): Verbose
     '''
     from sklearn import preprocessing
     from pandas import DataFrame
-	
+
     if v == 1:
         print("Scaling data....\n\t * Using {} scaling".format(method))    
 
@@ -113,11 +116,12 @@ def scale_data(data, method='standard',v=1):
         print('\nscale_data encountered a failure!! Check parameters\n')
         return(-1)
 
-def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 1):
+def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0):
     '''Split the dataset, return X_train, X_test, y_train, y_test as Pandas Dataframes
     - dataset: Pandas Dataframe. Data to split into training and test data
     - dep_var (optional, default = 'TenYearCHD'): string. Name of column to be dependant variable
     - test_size (optional, default = 0.2): float (0.0-1.0). Proportion of total data to make up test set.
+    - v (optional -default = 0): Verbose
     Returns 4 datasets in order: X_train, X_test, y_train, y_test
     '''
     from sklearn.model_selection import train_test_split
@@ -126,7 +130,7 @@ def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 1):
     if v == 1: 
         print('\nSplitting data set into training and test sets....')
         print('\t * {}% data in training set\n\t * {}% data in test set'.format(100*(1-test_size),100*test_size))
-        
+
     return train_test_split(X, y, test_size = test_size, random_state=0)
 
 print("Successfully imported the preprocessing module")
