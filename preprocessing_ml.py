@@ -11,26 +11,28 @@ and splitting dataset into test and training sets.
 print("Importing the preprocessing module for the Exeter NatSci Machine Learning Group.....")
 
 
-def chose_features(dataset, features=[], n_features = -1, v=0, vv =0):
+def chose_features(dataset, features=['TenYearCHD','sysBP', 'glucose', 'age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
+            'diabetes', 'BPMeds','male', 'BMI', 'prevalentStroke',
+            'education', 'heartRate', 'currentSmoker'], n_features = -1, v=0, vv =0):
     '''Return reduced dataset with only chosen columns
     - dataset: pandas dataframe of dataset to have columns chosen
     - features (optional, default = all features): list of strings matching features to keep
     - n_features (optional) - if specified, the top n features from the scaled list is chosen: 
-    ['glucose', 'age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
-        'diabetes', 'BPMeds', 'male', 'BMI', 'prevalentStroke',
-        'education', 'heartRate', 'currentSmoker'],
+    ['TenYearCHD','sysBP', 'glucose','age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
+            'diabetes', 'BPMeds','male', 'BMI', 'prevalentStroke',
+            'education', 'heartRate', 'currentSmoker'],
     - v (optional) - Verbose (default 0) int 0 or 1. Print no. of features kept and lost 
     - vv (optional) - Very verbose (default 0) int 0 or 1. Print list of chosen and rejected features
     '''
-    features = dataset.columns
+    
     
     if n_features != -1:
         if n_features > len(dataset.columns):
             print('WARNING: chose_features has an error: n_features must be less than the number of columns')
             return(-1)
         else:
-            ordered_f = ['TenYearCHD','sysBP','glucose', 'age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
-            'diabetes', 'BPMeds', 'male', 'BMI', 'prevalentStroke',
+            ordered_f = ['TenYearCHD','sysBP', 'glucose', 'age', 'totChol', 'cigsPerDay', 'diaBP', 'prevalentHyp',
+            'diabetes', 'BPMeds','male', 'BMI', 'prevalentStroke',
             'education', 'heartRate', 'currentSmoker']
             features = ordered_f[0:n_features+1]
 
