@@ -66,8 +66,10 @@ def impute_missing(dataset, strategy = 'median', v=1, vv=0):
     - vv (optional) - Very verbose (default 0) int 0 or 1. Print list of imputed features with counts and replaced value
     '''
     from sklearn.impute import SimpleImputer
+    from pandas import DataFrame
+    from numpy import NaN
     my_imputer = SimpleImputer(strategy=strategy)
-    dataset2 = pd.DataFrame(my_imputer.fit_transform(dataset),columns=dataset.columns)
+    dataset2 = DataFrame(my_imputer.fit_transform(dataset),columns=dataset.columns)
     
     if v == 1: 
         print('Imputing missing values with {}....'.format(strategy))
@@ -75,8 +77,8 @@ def impute_missing(dataset, strategy = 'median', v=1, vv=0):
         print('\t * Number of imputed values: ', dataset.isna().sum().sum() - dataset2.isna().sum().sum())
         print('\n')
     if vv == 1:
-        subbed = pd.DataFrame(dataset.isna().sum().sort_values(ascending=False),columns=['N_missing'])
-        subbed= subbed.assign(Imputed_value=np.NaN)
+        subbed = DataFrame(dataset.isna().sum().sort_values(ascending=False),columns=['N_missing'])
+        subbed= subbed.assign(Imputed_value=NaN)
         for col in subbed.index:
             if strategy == 'median':
                 subbed.loc[col,'Imputed_value'] = dataset[col].median()
@@ -87,20 +89,25 @@ def impute_missing(dataset, strategy = 'median', v=1, vv=0):
     return dataset2
 
 
-def scale_data(data, method='std'):
+def scale_data(data, method='standard',v=1):
     '''Return dataset scaled by MinMaxScalar or StandardScalar methods from sklearn.preprocessing
     - data: pandas dataframe of data to be scaled
     - method (optional): str of either 'minmax' for MinMaxScalar or 'std' for StandardScaler (default arg)
+    - v (optiona -default = 1): Verbose
     '''
     from sklearn import preprocessing
-    
+    from pandas import DataFrame
+	
+    if v == 1:
+        print("Scaling data....\n\t * Using {} scaling".format(method))    
+
     if method == 'minmax':
         scaler_minmax = preprocessing.MinMaxScaler((0,1))
-        return pd.DataFrame(scaler_minmax.fit_transform(data.copy()),columns=data.columns) 
+        return DataFrame(scaler_minmax.fit_transform(data.copy()),columns=data.columns) 
     
-    elif method == 'std':
+    elif method == 'standard':
         scaler_std = preprocessing.StandardScaler() #with_std=False
-        return pd.DataFrame(scaler_std.fit_transform(dataset.copy()),columns=dataset.columns)
+        return DataFrame(scaler_std.fit_transform(data.copy()),columns=data.columns)
     
     else:
         print('\nscale_data encountered a failure!!\n')
@@ -111,12 +118,14 @@ def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 1):
     - dataset: Pandas Dataframe. Data to split into training and test data
     - dep_var (optional, default = 'TenYearCHD'): string. Name of column to be dependant variable
     - test_size (optional, default = 0.2): float (0.0-1.0). Proportion of total data to make up test set.
+    Returns 4 datasets in order: X_train, X_test, y_train, y_test
     '''
     from sklearn.model_selection import train_test_split
     y = dataset[dep_var]
     X = dataset.drop([dep_var], axis = 1)
     if v == 1: 
-          print('Splitting data set into {}% training, {}% test dataset....'.format(100*(1-test_size),100*test_size))
+        print('\nSplitting data set into training and test sets....')
+        print('\t * {}% data in training set\n\t * {}% data in test set'.format(100*(1-test_size),100*test_size))
         
     return train_test_split(X, y, test_size = test_size, random_state=0)
 
