@@ -41,4 +41,4 @@ print("Decision Tree")
 model(DecisionTreeClassifier(), 'Decision Tree', X_train, X_test, y_train, y_test)
 
 print("Random Forest")
-model(RandomForestClassifier(n_estimators=100, bootstrap=True, max_features='sqrt'), 'Random Forest', X_train, X_test, y_train, y_test)
+model(RandomForestClassifier(n_estimators=10000, bootstrap=True, max_features='sqrt'), 'Random Forest', X_train, X_test, y_train, y_test)
