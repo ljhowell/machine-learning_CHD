@@ -108,12 +108,16 @@ def scale_data(data, method='standard',v=0):
 
     if method == 'minmax':
         scaler_minmax = preprocessing.MinMaxScaler((0,1))
-        return DataFrame(scaler_minmax.fit_transform(data.copy()),columns=data.columns) 
-    
+        cols = data.columns.drop('TenYearCHD',errors='ignore')
+        scaled_cols = DataFrame(scaler_minmax.fit_transform(data[cols].copy()),columns=cols) #drop TenyearCHD as we don't want to scale this
+        return(scaled_cols.join(data['TenYearCHD'])) #may break if data doesn't contain TenYearCHD column
+
     elif method == 'standard':
         scaler_std = preprocessing.StandardScaler() #with_std=False
-        return DataFrame(scaler_std.fit_transform(data.copy()),columns=data.columns)
-    
+        cols = data.columns.drop('TenYearCHD',errors='ignore')
+        scaled_cols = DataFrame(scaler_std.fit_transform(data[cols].copy()),columns=cols)
+        return(scaled_cols.join(data['TenYearCHD']))
+
     else:
         print('\nscale_data encountered a failure!! Check parameters\n')
         return(-1)
