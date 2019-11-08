@@ -122,12 +122,13 @@ def scale_data(data, method='standard',v=0):
         print('\nscale_data encountered a failure!! Check parameters\n')
         return(-1)
 
-def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0):
+def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0, r_state = 0):
     '''Split the dataset, return X_train, X_test, y_train, y_test as Pandas Dataframes
     - dataset: Pandas Dataframe. Data to split into training and test data
     - dep_var (optional, default = 'TenYearCHD'): string. Name of column to be dependant variable
     - test_size (optional, default = 0.2): float (0.0-1.0). Proportion of total data to make up test set.
     - v (optional -default = 0): Verbose
+    - r_state (optional): Sets the random state for the split
     Returns 4 datasets in order: X_train, X_test, y_train, y_test
     '''
     from sklearn.model_selection import train_test_split
@@ -137,6 +138,6 @@ def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0):
         print('\nSplitting data set into training and test sets....')
         print('\t * {}% data in training set\n\t * {}% data in test set'.format(100*(1-test_size),100*test_size))
 
-    return train_test_split(X, y, test_size = test_size, random_state=0)
+    return train_test_split(X, y, test_size = test_size, random_state=r_state)
 
 print("Successfully imported the preprocessing module")

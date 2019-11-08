@@ -1,0 +1,5 @@
+
+
+
+Things to do on ML
+	* Average using different random states - error bars
