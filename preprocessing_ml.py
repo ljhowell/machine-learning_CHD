@@ -60,7 +60,7 @@ def drop_missing(dataset,v=0):
         print('Now dropping rows with missing values....')
         print('\t * Dropped {} rows {:.1f}%. {} rows remaining\n'.format(lost,lost/len(dataset)*100,len(dataset2)))
 
-    return dataset2
+    return dataset2.reset_index(drop=True)
 
 def impute_missing(dataset, strategy = 'median', v=0, vv=0):
     '''Imputation - alternative to removing missing values.
@@ -91,7 +91,7 @@ def impute_missing(dataset, strategy = 'median', v=0, vv=0):
                 subbed.loc[[col,'Imputed_value']] = dataset[col].mean()
         print(subbed)
     
-    return dataset2
+    return dataset2.reset_index(drop=True)
 
 
 def scale_data(data, method='standard',v=0):
@@ -139,5 +139,85 @@ def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0, r_state = 0
         print('\t * {}% data in training set\n\t * {}% data in test set'.format(100*(1-test_size),100*test_size))
 
     return train_test_split(X, y, test_size = test_size, random_state=r_state)
+
+def upsample(dataset,r_state=0,ratio_1_to_0=1.0,v=0):
+    '''Resample dataset by upsampling, increasing number of minority samples by imputation
+    - dataset: Pandas Dataframe. Data to upsample
+    - r_state (optional): int. Random state to use
+    - ratio_1_to_0 (optional): float. Ratio to resample to.
+    - v (optional): Verbose
+    Returns resampled dataset
+    '''
+    from sklearn.utils import resample
+    from pandas import concat
+    
+    # Separate majority and minority classes
+    df_majority = dataset[dataset['TenYearCHD']==0]
+    df_minority = dataset[dataset['TenYearCHD']==1]
+    
+    if int(len(df_majority)*ratio_1_to_0) == 0:
+        print('[ERROR] upsample ratio_1_to_0 too low')
+        return dataset
+
+    # Upsample minority class
+    df_minority_upsampled = resample(df_minority, 
+                                     replace=True,     # sample with replacement
+                                     n_samples=int(len(df_majority)*ratio_1_to_0),    # to match majority class
+                                     random_state=0) # reproducible results
+
+    # Combine majority class with upsampled minority class
+    df_upsampled = concat([df_minority_upsampled,df_majority])
+    
+    
+    # Display class counts 
+    if v==1: 
+        print("\nUpsampling data....")
+        print('Number values before resample:\n',dataset['TenYearCHD'].value_counts().sort_index())
+        print('Ratio before 1:0 = {}'.format(dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0]))
+        print('Number values after resample:\n',df_upsampled['TenYearCHD'].value_counts().sort_index())
+        print('Ratio after 1:0 = {}'.format(df_upsampled['TenYearCHD'].value_counts()[1]/df_upsampled['TenYearCHD'].value_counts()[0]))
+    return df_upsampled.reset_index(drop=True)
+    
+def downsample(dataset,r_state=0,v=0,ratio_1_to_0=1):
+    '''Resample dataset by downsampling, decrease number of majority samples by dropping 
+    - dataset: Pandas Dataframe. Data to downsample
+    - r_state (optional): int. Random state to use.
+    - ratio_1_to_0 (optional): float. Ratio to resample to.
+    - v (optional): Verbose
+    Returns downsampled dataset
+    '''
+    from sklearn.utils import resample
+    from pandas import concat
+    
+    # Separate majority and minority classes
+    df_majority = dataset[dataset['TenYearCHD']==0]
+    df_minority = dataset[dataset['TenYearCHD']==1]
+    
+    if ratio_1_to_0 < dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0]:
+        print('[ERROR] downsample invalid ratio_1_to_0, cannot downsample below intial ratio of',
+              dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0])
+        return dataset
+    elif int(len(df_minority)/ratio_1_to_0) == 0:
+        print('[ERROR] downsample ratio_1_to_0 too high')
+        return dataset
+
+    # Downsample majority class
+    df_majority_downsampled = resample(df_majority, 
+                                     replace=False,    # sample without replacement
+                                     n_samples=int(len(df_minority)/ratio_1_to_0),     # to match minority class
+                                     random_state=r_state) # reproducible results
+
+    # Combine minority class with downsampled majority class
+    df_downsampled = concat([df_majority_downsampled, df_minority])
+
+    # Display new class counts
+    if v==1: 
+        print("\nDownsampling data....")
+        print('Number values before resample:\n',dataset['TenYearCHD'].value_counts().sort_index())
+        print('Ratio before 1:0 = {}'.format(dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0]))
+        print('Number values after resample:\n',df_downsampled['TenYearCHD'].value_counts().sort_index())
+        print('Ratio after 1:0 = {}'.format(df_downsampled['TenYearCHD'].value_counts()[1]/df_downsampled['TenYearCHD'].value_counts()[0]))
+        
+    return df_downsampled.reset_index(drop=True)
 
 print("Successfully imported the preprocessing module")
