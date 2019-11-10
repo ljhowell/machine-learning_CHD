@@ -60,7 +60,7 @@ def drop_missing(dataset,v=0):
         print('Now dropping rows with missing values....')
         print('\t * Dropped {} rows {:.1f}%. {} rows remaining\n'.format(lost,lost/len(dataset)*100,len(dataset2)))
 
-    return dataset2
+    return dataset2.reset_index(drop=True)
 
 def impute_missing(dataset, strategy = 'median', v=0, vv=0):
     '''Imputation - alternative to removing missing values.
@@ -91,7 +91,7 @@ def impute_missing(dataset, strategy = 'median', v=0, vv=0):
                 subbed.loc[[col,'Imputed_value']] = dataset[col].mean()
         print(subbed)
     
-    return dataset2
+    return dataset2.reset_index(drop=True)
 
 
 def scale_data(data, method='standard',v=0):
@@ -171,11 +171,12 @@ def upsample(dataset,r_state=0,ratio_1_to_0=1.0,v=0):
     
     # Display class counts 
     if v==1: 
+        print("\nUpsampling data....")
         print('Number values before resample:\n',dataset['TenYearCHD'].value_counts().sort_index())
         print('Ratio before 1:0 = {}'.format(dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0]))
         print('Number values after resample:\n',df_upsampled['TenYearCHD'].value_counts().sort_index())
         print('Ratio after 1:0 = {}'.format(df_upsampled['TenYearCHD'].value_counts()[1]/df_upsampled['TenYearCHD'].value_counts()[0]))
-    return df_upsampled
+    return df_upsampled.reset_index(drop=True)
     
 def downsample(dataset,r_state=0,v=0,ratio_1_to_0=1):
     '''Resample dataset by downsampling, decrease number of majority samples by dropping 
@@ -211,11 +212,12 @@ def downsample(dataset,r_state=0,v=0,ratio_1_to_0=1):
 
     # Display new class counts
     if v==1: 
+        print("\nDownsampling data....")
         print('Number values before resample:\n',dataset['TenYearCHD'].value_counts().sort_index())
         print('Ratio before 1:0 = {}'.format(dataset['TenYearCHD'].value_counts()[1]/dataset['TenYearCHD'].value_counts()[0]))
         print('Number values after resample:\n',df_downsampled['TenYearCHD'].value_counts().sort_index())
         print('Ratio after 1:0 = {}'.format(df_downsampled['TenYearCHD'].value_counts()[1]/df_downsampled['TenYearCHD'].value_counts()[0]))
         
-    return df_downsampled
+    return df_downsampled.reset_index(drop=True)
 
 print("Successfully imported the preprocessing module")
