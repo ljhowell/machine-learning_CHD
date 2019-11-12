@@ -122,23 +122,37 @@ def scale_data(data, method='standard',v=0):
         print('\nscale_data encountered a failure!! Check parameters\n')
         return(-1)
 
-def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0, r_state = 0):
-    '''Split the dataset, return X_train, X_test, y_train, y_test as Pandas Dataframes
+def split_data(dataset,dep_var='TenYearCHD', test_size = 0.2, v = 0, r_state = 0,split_dep_var=True):
+    '''Split the dataset into test and training sets.
     - dataset: Pandas Dataframe. Data to split into training and test data
-    - dep_var (optional, default = 'TenYearCHD'): string. Name of column to be dependant variable
+    - dep_var (optional, default = 'TenYearCHD'): string. Name of column to be dependant variable if split_dep_var==True
     - test_size (optional, default = 0.2): float (0.0-1.0). Proportion of total data to make up test set.
     - v (optional -default = 0): Verbose
     - r_state (optional): Sets the random state for the split
-    Returns 4 datasets in order: X_train, X_test, y_train, y_test
+    - split_dep_var (optional): If True, return 4 DataFrames: X_train, X_test, y_train, y_test
+                                If False, retun 2 DataFrames: train, test
     '''
     from sklearn.model_selection import train_test_split
-    y = dataset[dep_var]
-    X = dataset.drop([dep_var], axis = 1)
+ 
     if v == 1: 
         print('\nSplitting data set into training and test sets....')
         print('\t * {}% data in training set\n\t * {}% data in test set'.format(100*(1-test_size),100*test_size))
+    if split_dep_var == True: 
+        y = dataset[dep_var]
+        X = dataset.drop([dep_var], axis = 1)
+        return train_test_split(X, y, test_size = test_size, random_state=r_state)
+    else:
+        return train_test_split(dataset, test_size = test_size, random_state=r_state)
 
-    return train_test_split(X, y, test_size = test_size, random_state=r_state)
+def split_dep_var(dataset,dep_var='TenYearCHD'):
+    '''Split the dataset into X and y where y is the dependant variable for supervised training.
+    - dataset: Pandas Dataframe. Data to split into X and y sets
+    - dep_var (optional): String. Name of column to be dependant variable
+    returns 2 DataFrames - X, y
+    ''' 
+    y = dataset[dep_var]
+    X = dataset.drop([dep_var], axis = 1)
+    return(X,y)
 
 def upsample(dataset,r_state=0,ratio_1_to_0=1.0,v=0):
     '''Resample dataset by upsampling, increasing number of minority samples by imputation
