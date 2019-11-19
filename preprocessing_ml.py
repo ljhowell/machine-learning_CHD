@@ -269,9 +269,9 @@ def smote(dataset, r_state=0, ratio_1_to_0=1.0, test_size=0.2, v=0):
     if v == 1:
         print("\nUpsampling data using SMOTE")
         print('Splitting data set into training and test sets....')
-        print("The ratio of train data to test data is {}:1\n".format((train_data.shape[0]) / (dataset.shape[0])))
-        print("The original ratio of CHD to non-CHD was: {}: 1".format(dataset.TenYearCHD.value_counts()[0] / dataset.TenYearCHD.value_counts()[1]))
-        print("The new ratio of CHD to non-CHD is: {}: 1".format(X_train_res.shape[0] / y_train_res.shape[0]))
+        print("The ratio of train data to test data is {:.1f}:1\n".format((train_data.shape[0]) / (dataset.shape[0])))
+        print("The original ratio of CHD to non-CHD was: {:.1f}: 1".format(dataset.TenYearCHD.value_counts()[0] / dataset.TenYearCHD.value_counts()[1]))
+        print("The new ratio of CHD to non-CHD is: {:.1f}: 1".format(X_train_res.shape[0] / y_train_res.shape[0]))
 
     return X_train_res, X_test, y_train_res, y_test
 
