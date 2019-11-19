@@ -276,4 +276,43 @@ def smote(dataset, r_state=0, ratio_1_to_0=1.0, test_size=0.2, v=0):
     return X_train_res, X_test, y_train_res, y_test
 
 
+def outliers(dataset, v=0):
+    """Removing outliers from the dataset. Outliers have been determined using boxplots. They are values that are in the third quartile. 
+    - dataset: Pandas Dataframe. Data to remove outliers
+    - v (optional): Verbose
+    """
+
+    import pandas as pd
+
+    def cleaning(dataset, feature, upper):
+        """Function that removes all values over the desginated upper value
+        - dataset: Pandas Dataframe. Data to remove outliers
+        - feature: Selected feature. Feature where the outliers are to be removed.
+        - upper: All values above this selected number limit will be removed.
+        """
+
+        #Copying original dataset and dropping all values above the upper limit
+        dataset_original = dataset
+        dataset = dataset.drop(dataset[dataset['{}'.format(feature)] > upper].index)
+
+        return dataset
+
+    #Copying previous dataset
+    dataset_old = dataset
+
+    #Removing outliers
+    dataset = cleaning(dataset, 'totChol', 599)
+    dataset = cleaning(dataset, 'BMI', 50)
+    dataset = cleaning(dataset, 'cigsPerDay', 50)
+    dataset = cleaning(dataset, 'sysBP', 250)
+
+    #Verbose, show waht is going on
+    if v == 1:
+        print('Now dropping rows with outliers values....')
+        ratio = dataset.shape[0] / dataset_old.shape[0] * 100
+        print('\t * Dropped {} rows {:.1f}%. {} rows remaining'.format((dataset_old.shape[0] - dataset.shape[0]), ((dataset_old.shape[0] - dataset.shape[0]) / dataset_old.shape[0] * 100), dataset.shape[0]))
+
+    return dataset
+
+
 print("Successfully imported the preprocessing module")
