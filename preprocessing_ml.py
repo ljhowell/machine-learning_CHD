@@ -306,7 +306,7 @@ def outliers(dataset, v=0):
     dataset = cleaning(dataset, 'cigsPerDay', 50)
     dataset = cleaning(dataset, 'sysBP', 250)
 
-    #Verbose, show waht is going on
+    #Verbose, show what is going on
     if v == 1:
         print('Now dropping rows with outliers values....')
         ratio = dataset.shape[0] / dataset_old.shape[0] * 100
