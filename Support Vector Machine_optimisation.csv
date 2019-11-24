@@ -1,0 +1,17 @@
+,remove_outliers,remove_missing,scale,resample,test_max_mean,optimised_cutoff
+0,FALSE,drop,minmax,none,0.480565371,0.226666667
+8,FALSE,drop,standard,none,0.480243161,0.2
+2,FALSE,drop,minmax,up,0.455635492,0.386666667
+10,FALSE,drop,standard,up,0.453012048,0.386666667
+3,FALSE,drop,minmax,down,0.447619048,0.386666667
+11,FALSE,drop,standard,down,0.437054632,0.386666667
+4,FALSE,impute_median,minmax,none,0.380462725,0.173333333
+12,FALSE,impute_median,standard,none,0.373937677,0.186666667
+7,FALSE,impute_median,minmax,down,0.371084337,0.386666667
+15,FALSE,impute_median,standard,down,0.363636364,0.346666667
+5,FALSE,impute_median,minmax,smote,0.359689922,0.386666667
+13,FALSE,impute_median,standard,smote,0.358118361,0.373333333
+14,FALSE,impute_median,standard,up,0.357995227,0.386666667
+6,FALSE,impute_median,minmax,up,0.355450237,0.386666667
+9,FALSE,drop,standard,smote,0.318181818,0.373333333
+1,FALSE,drop,minmax,smote,0.317757009,0.346666667
